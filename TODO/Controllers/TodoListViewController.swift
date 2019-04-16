@@ -22,6 +22,7 @@ class TodoListViewController: UITableViewController {
         
         print(dataFilePath!)
         
+        /*
         //创建一些默认数据
         let newItem = Item() //创建一个 Item 对象
         newItem.title = "购买水杯" //设置 Item 的 title 属性
@@ -34,6 +35,9 @@ class TodoListViewController: UITableViewController {
         let newItem3 = Item() //创建一个 Item 对象
         newItem3.title = "拯救地球🌍" //设置 Item 的 title 属性
         itemArray.append(newItem3) //该 Item 对象添加到 itemArray 数组中
+        */
+        
+        loadItems()
         
         //再向 itemArray 数组中添加 117 个 newItem
 //        for index in 4...120 {
@@ -148,5 +152,19 @@ class TodoListViewController: UITableViewController {
             print("编码错误：\(error)")
         }
     }
+    
+    //加载Items
+    func loadItems() {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("解码 item 错误!")
+            }
+        }
+    }
+    
 }
 
