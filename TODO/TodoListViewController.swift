@@ -28,7 +28,7 @@ class TodoListViewController: UITableViewController {
         //创建了一个UIAlertAction类型的对象
         let action = UIAlertAction(title: "添加项目", style: .default) { (action) in
             //用户单击”添加项目“后执行的代码
-            self.itemArray.append(textField.text!)
+            self.itemArray.append(textField.text!) //将用户在输入框输入的内容添加到itemArray数组中
             self.tableView.reloadData() //前面数据更新了，因此也要重载数据，更新视图
         }
         
