@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("didFinishLaunchingWithOptions - 应用启动时调用")
         
         //应用在Mac操作系统中的实际位置
-        print("应用在Mac操作系统中的实际位置:\(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)")
+//        print("应用在Mac操作系统中的实际位置:\(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)")
         
         /* iosi系统会为每一个应用程序生成一个私有目录，这个目录位于 MacOS 系统下 iPhone 模拟器文件夹内部，并会随机生成一个字符串作为目录名。
          * 每一次启动应用程序是，这个字母数字串都不同于上一次。
