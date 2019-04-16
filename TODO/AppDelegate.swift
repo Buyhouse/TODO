@@ -17,6 +17,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         print("didFinishLaunchingWithOptions - 应用启动时调用")
+        
+        //应用在Mac操作系统中的实际位置
+        print("应用在Mac操作系统中的实际位置:\(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)")
+        
+        /* iosi系统会为每一个应用程序生成一个私有目录，这个目录位于 MacOS 系统下 iPhone 模拟器文件夹内部，并会随机生成一个字符串作为目录名。
+         * 每一次启动应用程序是，这个字母数字串都不同于上一次。
+         * 因为应用是在沙箱(sandbox)中，文件读写权限会受到限制，只能在下面几个目录下读写文件：
+         **** Documents：应用中用户数据可以放这里，iTunes 备份和恢复的时候会包括此目录。
+         **** tmp：存放临时文件，iTunes 不会备份和恢复此目录，此目录下的文件可能会在应用退出后删除。
+         **** Library/Caches：存放缓存文件，iTunes 不会备份此目录，此目录下的文件不会在应用退出后被删除。
+         */
+        
         return true
     }
 

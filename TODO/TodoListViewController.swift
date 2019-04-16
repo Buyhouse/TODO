@@ -9,11 +9,18 @@
 import UIKit
 
 class TodoListViewController: UITableViewController {
+  //UserDefaults适合存储轻量级的本地客户端数据，适合存储一些简单的，如字符串和数字之类的东西。用来保存一个系统的用户名、密码实现记住密码功能，UserDefaults是首选。
+    let defaults = UserDefaults.standard //因为 UserDefaults 是单例模式，所以需要通过类方法 standard 获取该类的实例
     
     var itemArray = ["购买水杯","吃饭","修改密码"] //临时呈现的事务列表项
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //应用启动后主动获取 UserDefaults 的数据
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] { //可选绑定的方式赋值
+            itemArray = items // items 赋值给 itemArray
+        }
         
     }
     
@@ -25,19 +32,29 @@ class TodoListViewController: UITableViewController {
         
         //创建了一个UIAlertController类型对象，并设置警告对话框的标题为”添加一个新的Todo项目“，风格为.alert类型。
         let alert = UIAlertController(title: "添加一个新的Todo项目", message: "", preferredStyle: .alert)
+        
         //创建了一个UIAlertAction类型的对象
         let action = UIAlertAction(title: "添加项目", style: .default) { (action) in
+            
             //用户单击”添加项目“后执行的代码
             self.itemArray.append(textField.text!) //将用户在输入框输入的内容添加到itemArray数组中
+            
+            //通过set()方法，将 itemArray 数组存储到 UserDefaults 中，与其对应的键名为TodoListArray
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            
             self.tableView.reloadData() //前面数据更新了，因此也要重载数据，更新视图
         }
         
         alert.addTextField { (alertTextField) in
+            
             alertTextField.placeholder = "创建一个新项目..."
+            
             //让textField指向alertTextField，因为出了闭包，alertTextField就不存在了
             textField = alertTextField
         }
+        
         alert.addAction(action)
+        
         present(alert, animated: true, completion: nil) //通过present方法将警告框显示在屏幕上
     }
     
