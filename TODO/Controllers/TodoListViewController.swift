@@ -9,16 +9,17 @@
 import UIKit
 
 class TodoListViewController: UITableViewController {
-  //UserDefaults适合存储轻量级的本地客户端数据，适合存储一些简单的，如字符串和数字之类的东西。用来保存一个系统的用户名、密码实现记住密码功能，UserDefaults是首选。
-    let defaults = UserDefaults.standard //因为 UserDefaults 是单例模式，所以需要通过类方法 standard 获取该类的实例
+    //UserDefaults适合存储轻量级的本地客户端数据，适合存储一些简单的，如字符串和数字之类的东西。用来保存一个系统的用户名、密码实现记住密码功能，UserDefaults是首选。
+    //    let defaults = UserDefaults.standard //因为 UserDefaults 是单例模式，所以需要通过类方法 standard 获取该类的实例
     
     var itemArray = [Item]() //声明一个存储Item对象的数组变量
+    
+    //创建一个常量存储应用的 Document 的路径
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //创建一个常量存储应用的 Document 的路径
-        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         print(dataFilePath!)
         
         //创建一些默认数据
@@ -35,12 +36,12 @@ class TodoListViewController: UITableViewController {
         itemArray.append(newItem3) //该 Item 对象添加到 itemArray 数组中
         
         //再向 itemArray 数组中添加 117 个 newItem
-        for index in 4...120 {
-            let newItem = Item()
-            newItem.title = "第\(index)件事务"
-            itemArray.append(newItem)
-        }
- 
+//        for index in 4...120 {
+//            let newItem = Item()
+//            newItem.title = "第\(index)件事务"
+//            itemArray.append(newItem)
+//        }
+        
     }
     
     //MARK:- Add New Items
@@ -61,8 +62,10 @@ class TodoListViewController: UITableViewController {
             
             self.itemArray.append(newItem) //将 newItem 添加到 itemArray 数组之中
             
+            self.saveItems() //存储Items
+            
             //通过set()方法，将 itemArray 数组存储到 UserDefaults 中，与其对应的键名为TodoListArray
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            //            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
             self.tableView.reloadData() //前面数据更新了，因此也要重载数据，更新视图
         }
@@ -91,11 +94,11 @@ class TodoListViewController: UITableViewController {
         let item = itemArray[indexPath.row]
         cell.accessoryType = item.done == true ? .checkmark : .none
         
-//        if itemArray[indexPath.row].done == false {
-//            cell.accessoryType = .none
-//        } else {
-//            cell.accessoryType = .checkmark
-//        }
+        //        if itemArray[indexPath.row].done == false {
+        //            cell.accessoryType = .none
+        //        } else {
+        //            cell.accessoryType = .checkmark
+        //        }
         
         
         print("更新第：\(indexPath.row)行")
@@ -116,11 +119,14 @@ class TodoListViewController: UITableViewController {
         
         //通过 indexPath 参数，获取用户点击的单元格，判断单元格 done 属性值，如果值为 false，则修改为 true；反之，修改为false。
         //这里仅仅是根据用户点选修改数据，而数据知道的视图样式设置在 cellForRowAt 方法中
-        if itemArray[indexPath.row].done == false {
-            itemArray[indexPath.row].done = true
-        } else {
-            itemArray[indexPath.row].done = false
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done //取反操作，常用于点选改变状态,同于下面代码
+//        if itemArray[indexPath.row].done == false {
+//            itemArray[indexPath.row].done = true
+//        } else {
+//            itemArray[indexPath.row].done = false
+//        }
+        
+        saveItems() //储存Items
         
         //更新视图
         tableView.beginUpdates()  //告诉表格视图我们想要马上更新某些单元格对象的界面了。
@@ -129,6 +135,18 @@ class TodoListViewController: UITableViewController {
         
         //取消选中状态，并启用动画过渡。解决点击某个后，一直保持灰色选中状态，这样可以变成点击状态。视觉效果：点击完后，灰色逐渐消失。
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    //存储Items
+    func saveItems() {
+        //借助 PropertyListEncoder 类对 itemArray 数组进行编码
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("编码错误：\(error)")
+        }
     }
 }
 
